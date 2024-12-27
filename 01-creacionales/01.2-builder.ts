@@ -11,7 +11,7 @@
  * * que lo componen.
  */
 
-import { COLORS } from '../helpers/colors.ts';
+import { COLORS } from "../helpers/colors.ts";
 
 //! Tarea: crear un QueryBuilder para construir consultas SQL
 /**
@@ -49,38 +49,58 @@ class QueryBuilder {
     this.table = table;
   }
 
-  select(...fields: string[]): QueryBuilder {
-    throw new Error('Method not implemented.');
+  select(...args: string[]): QueryBuilder {
+    this.fields = args;
+    return this;
   }
 
   where(condition: string): QueryBuilder {
-    throw new Error('Method not implemented.');
+    
+    if (this.conditions.length === 0) {
+      
+      this.conditions.push(`${condition}`);
+    } else if (this.conditions.length > 1) {
+      this.conditions.push(`and ${condition}`);
+    }
+
+    return this;
   }
 
-  orderBy(field: string, direction: 'ASC' | 'DESC' = 'ASC'): QueryBuilder {
-    throw new Error('Method not implemented.');
+  orderBy(field: string, direction: "ASC" | "DESC" = "ASC"): QueryBuilder {
+    this.orderFields.push(`order by ${field} ${direction}`);
+    return this;
   }
 
   limit(count: number): QueryBuilder {
-    throw new Error('Method not implemented.');
+    this.limitCount = count;
+    return this;
   }
 
   execute(): string {
     // Select id, name, email from users where age > 18 and country = 'Cri' order by name ASC limit 10;
-    throw new Error('Method not implemented.');
+    return `select ${
+      this.fields.length > 0 ? this.fields.join(", ") : "*"
+    } from ${this.table} ${
+      this.conditions.length > 0 ? "where " + this.conditions.join(" ") : ""
+    } ${
+      this.orderFields.length > 0
+        ? this.orderFields.join(", ")
+        : ""
+    } ${this.limitCount ? `limit ${this.limitCount}` : ""}`;
   }
 }
 
 function main() {
-  const usersQuery = new QueryBuilder('users')
-    .select('id', 'name', 'email')
-    .where('age > 18')
+  const usersQuery = new QueryBuilder("users")
+    .select("id", "name", "email")
+    .where("age > 18")
     .where("country = 'Cri'") // Esto debe de hacer una condición AND
-    .orderBy('name', 'ASC')
+    .orderBy("name", "ASC")
+    .orderBy("email", "DESC") // Esto debe de hacer una condición AND
     .limit(10)
     .execute();
 
-  console.log('%cConsulta:\n', COLORS.red);
+  console.log("%cConsulta:\n", COLORS.red);
   console.log(usersQuery);
 }
 
