@@ -35,7 +35,6 @@ class FlyOverWater implements MovementStrategy {
   }
 }
 
-
 // Estrategia 2: No tan Rapida pero no tan costosa
 class WalkClumsily implements MovementStrategy {
   move(): void {
@@ -43,24 +42,38 @@ class WalkClumsily implements MovementStrategy {
   }
 }
 
-
 //Cosumidor de la estrategia
 
 class Duck {
-    private name:string
-    private movementStrategy: MovementStrategy
+  private name: string;
+  private movementStrategy: MovementStrategy;
 
-    constructor(name:string, movementStrategy:MovementStrategy){
-        this.name=name;
-        this.movementStrategy=movementStrategy
-    }
+  constructor(name: string, movementStrategy: MovementStrategy) {
+    this.name = name;
+    this.movementStrategy = movementStrategy;
+  }
 
-    performeMove(){
-        console.log(`${this.name} se prepara para moverse`)
-    }
+  performeMove() {
+    console.log(`${this.name} se prepara para moverse`);
+    this.movementStrategy.move()
+  }
 
-    setMovementStrategy(movementStrategy:MovementStrategy){
-        this.movementStrategy=movementStrategy
-        console.log(`${this.name} cambio de estrategia`)
-    }
+  setMovementStrategy(movementStrategy: MovementStrategy) {
+    this.movementStrategy = movementStrategy;
+    console.log(`${this.name} cambio de estrategia`);
+  }
 }
+
+(() => {
+  const duck1 = new Duck("Patito rapido", new SwimFast());
+  const duck2 = new Duck("Patito volador", new FlyOverWater());
+  const duck3 = new Duck("Patito torpe", new WalkClumsily());
+  console.log(`%cArranca la carrera de patos!!!`,COLORS.red);
+  duck1.performeMove();
+  duck2.performeMove();
+  duck3.performeMove();
+  duck3.setMovementStrategy(new FlyOverWater())
+  duck3.performeMove()
+  duck3.setMovementStrategy(new SwimFast())
+  duck3.performeMove()
+})();
